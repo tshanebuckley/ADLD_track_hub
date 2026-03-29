@@ -1,0 +1,5 @@
+# pixi environments
+.pixi
+
+# skip the .cache directory
+.cache

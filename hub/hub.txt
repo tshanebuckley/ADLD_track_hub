@@ -1,0 +1,5 @@
+hub adld
+shortLabel ADLD
+longLabel ADLD Structural Variants
+genomesFile genomes.txt
+email tsb31@pitt.edu

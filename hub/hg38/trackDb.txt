@@ -1,0 +1,10 @@
+track ADLD
+type bigBed 6 +
+bigDataUrl features.bb
+shortLabel ADLD
+longLabel ADLD Structural Variants
+visibility pack
+itemRgb on
+scoreFilter 0
+scoreFilterLimits 0:1000
+searchIndex name
