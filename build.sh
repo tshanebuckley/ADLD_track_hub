@@ -23,4 +23,4 @@ fetchChromSizes $genome > $chrom
 # strip the headers from the bed file
 grep -v "^browser\|^track\|^#" $bed | sed '/^[[:space:]]*$/d; s/\r//' > $xbed
 # create the big bed file
-bedToBigBed -sort -type=bed6+3 $xbed $chrom $bbed
+bedToBigBed -sort -type=bed9+ $xbed $chrom $bbed
