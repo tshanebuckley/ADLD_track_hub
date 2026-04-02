@@ -8,6 +8,8 @@ chrom="$cache/${genome}.chrom.sizes"
 ref="$hub/$genome"
 # big bed file
 bbed="$ref/features.bb"
+# AutoSQL file
+as="$ref/features.as"
 # trackDb file base
 bdb="$data/$genome/trackDb.txt"
 # trackDb file in the hub itself
@@ -26,4 +28,4 @@ grep -v "^browser\|^track\|^#" $bed | sed '/^[[:space:]]*$/d; s/\r//' | awk -v O
 # 3. append the formatted data columns to our bed file
 adld $genome $data $hub $xbed
 # create the big bed file
-bedToBigBed -sort -type=bed9+ $xbed $chrom $bbed
+bedToBigBed -tab -sort -as=$as -type=bed9+ $xbed $chrom $bbed

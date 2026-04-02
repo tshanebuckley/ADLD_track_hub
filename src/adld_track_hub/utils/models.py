@@ -114,10 +114,12 @@ class BedTable:
     extensions: List[BedTableExtension]
     template: Path
     hub: Path
+    bed: Path
 
     def __init__(self, path: Path, hub: Path, reference: str, bed: Path):
         self.template = path / reference
         self.hub = hub / reference
+        self.bed = bed
         tables: Path = path / "tables"
         # load the actual bed file
         self.data = load_bed(bed)
@@ -142,6 +144,11 @@ class BedTable:
                 extension_results.data,
                 on="name",
                 how="left"
+            )
+            bed.write_csv(
+                self.bed,
+                separator = "\t",
+                include_header = False
             )
             # collect the trackDb append line for the tables
             trackDb.append(extension_results.track_db)
