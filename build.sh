@@ -1,19 +1,17 @@
 # set the genome to the first argument passed
-genome="$1" 
-# track hub root
-hub="$PIXI_PROJECT_ROOT/hub"
-# data directory
-data="$PIXI_PROJECT_ROOT/data"
-# cache for each build
-cache="$PIXI_PROJECT_ROOT/.cache"
+genome="$1"
+# load our shared variables
+source vars.sh
 # chrom sizes file
 chrom="$cache/${genome}.chrom.sizes"
-# bed file
-bed="$data/data.bed"
-# headerless bed file
-xbed="$cache/features.bed"
+# reference genome dir in the hub
+ref="$hub/$genome"
 # big bed file
-bbed="$hub/${genome}/features.bb"
+bbed="$ref/features.bb"
+# trackDb file base
+bdb="$data/$genome/trackDb.txt"
+# trackDb file in the hub itself
+db="$ref/trackDb.txt"
 
 # create the cache dir if it doesn't exist
 mkdir -p $cache
@@ -21,6 +19,11 @@ mkdir -p $cache
 # fetch the chrom sizes
 fetchChromSizes $genome > $chrom
 # strip the headers from the bed file
-grep -v "^browser\|^track\|^#" $bed | sed '/^[[:space:]]*$/d; s/\r//' > $xbed
+grep -v "^browser\|^track\|^#" $bed | sed '/^[[:space:]]*$/d; s/\r//' | awk -v OFS='\t' '{$1=$1; print}' > $xbed
+# run the python cli tool to:
+# 1. append the trackDb line for our data table extension columns
+# 2. generate out the AutoSQL file with our extension columns
+# 3. append the formatted data columns to our bed file
+adld $genome $data $hub $xbed
 # create the big bed file
 bedToBigBed -sort -type=bed9+ $xbed $chrom $bbed

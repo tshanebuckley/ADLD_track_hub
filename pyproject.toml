@@ -5,6 +5,12 @@ name = "ADLD_track_hub"
 requires-python = ">= 3.11"
 version = "0.1.0"
 
+[mypy]
+strict = true
+
+[project.scripts]
+adld = "adld_track_hub.cli:app"
+
 [build-system]
 build-backend = "hatchling.build"
 requires = ["hatchling"]
@@ -19,14 +25,20 @@ adld_track_hub = { path = ".", editable = true }
 [tool.pixi.tasks]
 
 [tool.taskipy.tasks]
-build = "bash build.sh 'hg38'"
+build = "bash $PIXI_PROJECT_ROOT/build.sh 'hg38'"
 clear = "rm -rf '$PIXI_PROJECT_ROOT/.cache'"
-check = "bash check.sh 'hg38'"
+check = "bash $PIXI_PROJECT_ROOT/check.sh 'hg38'"
+sync = "pixi install"
 
 [tool.pixi.dependencies]
 ucsc-bedtobigbed = ">=482,<483"
 ucsc-fetchchromsizes = ">=482,<483"
 taskipy = ">=1.14.1,<2"
 ucsc-bigbedtobed = ">=482,<483"
+typer = ">=0.24.0,<0.25"
+polars = ">=1.39.3,<2"
+jinja2 = ">=3.1.6,<4"
+pydantic = ">=2.12.5,<3"
+pyyaml = ">=6.0.3,<7"
 
 
