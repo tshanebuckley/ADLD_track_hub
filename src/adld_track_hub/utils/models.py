@@ -88,12 +88,14 @@ class BedTableExtension:
             data = model.model_dump()
             name = data.pop("name")
             data = {k: v for k, v in data.items() if v is not None and v != ""}
-            rows.append(
-                {
-                    "name": name,
-                    self.meta.column_name: str(data).replace("\"", "").replace("'", "")
-                }
-            )
+            # rows.append(
+            #     {
+            #         "name": name,
+            #         self.meta.column_name: str(data).replace("\"", "").replace("'", "")
+            #     }
+            # )
+            # rows.append({"name": name, self.meta.column_name: str(data)})
+            rows.append({"name": name, self.meta.column_name: json.dumps(data)})
         return pl.DataFrame(rows)
         # return df.with_columns(
         #     pl.col(self.meta.column_name).str.replace_all('"', '\\"')
@@ -157,7 +159,8 @@ class BedTable:
             bed.write_csv(
                 self.bed,
                 separator = "\t",
-                include_header = False
+                include_header = False,
+                quote_style = "never"
             )
             # collect the trackDb append line for the tables
             trackDb.append(extension_results.track_db)
