@@ -1,5 +1,5 @@
 track ADLD
-type bigBed 6 +
+type bigBed 9 +
 bigDataUrl features.bb
 shortLabel ADLD
 longLabel ADLD Structural Variants
