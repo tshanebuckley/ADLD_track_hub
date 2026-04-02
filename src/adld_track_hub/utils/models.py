@@ -84,14 +84,16 @@ class BedTableExtension:
     # Converts the RowData list into a polars DataFrame.
     def as_dataframe(self) -> pl.DataFrame:
         rows = []
-        col_names = []
         for model in self.extensions:
             data = model.model_dump()
             name = data.pop("name")
             rows.append({"name": name, self.meta.column_name: data})
         df = pl.DataFrame(rows)
-        return df.with_columns(
+        df = df.with_columns(
             pl.col(self.meta.column_name).struct.json_encode()
+        )
+        return df.with_columns(
+           pl.col(self.meta.column_name).str.replace_all('"', '\\"')
         )
 
     # Gets the string to append to the trackDb.txt file.
