@@ -1,7 +1,6 @@
 import typer
 from pathlib import Path
 from typing import Annotated
-import polars as pl
 
 from adld_track_hub.utils.models import build_hub
 
@@ -39,7 +38,6 @@ def main(
     ]
 ):
     build_hub(data, hub, reference, bed)
-    print(f"Hello")
 
 if __name__ == "__main__":
     app()

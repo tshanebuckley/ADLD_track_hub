@@ -1,4 +1,4 @@
-from pydantic import BaseModel, TypeAdapter
+from pydantic import BaseModel
 from abc import ABC
 from typing import List
 import csv
@@ -88,18 +88,8 @@ class BedTableExtension:
             data = model.model_dump()
             name = data.pop("name")
             data = {k: v for k, v in data.items() if v is not None and v != ""}
-            # rows.append(
-            #     {
-            #         "name": name,
-            #         self.meta.column_name: str(data).replace("\"", "").replace("'", "")
-            #     }
-            # )
-            # rows.append({"name": name, self.meta.column_name: str(data)})
             rows.append({"name": name, self.meta.column_name: json.dumps(data)})
         return pl.DataFrame(rows)
-        # return df.with_columns(
-        #     pl.col(self.meta.column_name).str.replace_all('"', '\\"')
-        # )
 
     # Gets the string to append to the trackDb.txt file.
     def get_track_db_append(self) -> str:
@@ -197,7 +187,6 @@ def load_extension(table: Path) -> List[RowData]:
         # use the name of the folder as the module name
         module_name = table.name
         schema: Path = table / "schema.py"
-        data: Path = table / "data.csv"
         # 1. Create a module specification (spec) from the file path
         spec: ModuleSpec|None = importlib.util.spec_from_file_location(module_name, schema)
         # 2. Create a new module object based on that spec
