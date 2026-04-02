@@ -82,12 +82,12 @@ class BedTableExtension:
         self.extensions = load_extension(table)
 
     # Converts the RowData list into a polars DataFrame.
-    def as_dataframe(self, column_name: str) -> pl.DataFrame:
+    def as_dataframe(self) -> pl.DataFrame:
         rows = []
         for model in self.extensions:
             data = model.model_dump()
             name = data.pop("name")
-            rows.append({"name": name, column_name: json.dumps(data)})
+            rows.append({"name": name, self.meta.column_name: json.dumps(data)})
         return pl.DataFrame(rows)
 
     # Gets the string to append to the trackDb.txt file.
@@ -97,7 +97,7 @@ class BedTableExtension:
     # Gets the string to append to the features.as file.
     def get_auto_sql_append(self) -> str:
         description = self.meta.description
-        if description == None:
+        if description == None or description == "":
             description = "Key-value pairs displayed as detail table"
         return f"lstring    json{self.meta.column_name};    \"{description}\""
 
@@ -105,7 +105,7 @@ class BedTableExtension:
         return RowBuildReturn(
             track_db = self.get_track_db_append(),
             auto_sql = self.get_auto_sql_append(),
-            data = self.as_dataframe(self.meta.column_name)
+            data = self.as_dataframe()
         )
 
 # Contains the original bed file data and the bed file extensions.
@@ -163,7 +163,7 @@ class BedTable:
         )
         # append the trackDb.txt file
         with open(db, "a") as file:
-            file.write(f"{','.join(trackDb)}\n")
+            file.write(f"detailsDynamicTable {','.join(trackDb)}\n")
         # generate the AutoSQL file
         template = Template(auto_sql_template)
         with open(self.hub / "features.as", "w") as file:

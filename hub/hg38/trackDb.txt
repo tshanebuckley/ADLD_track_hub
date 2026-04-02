@@ -8,4 +8,4 @@ itemRgb on
 searchIndex name
 scoreFilter 0
 scoreFilterLimits 0:1000
-jsonmolecular|Molecular Features
+detailsDynamicTable jsonmolecular|Molecular Features

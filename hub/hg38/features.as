@@ -11,5 +11,5 @@ table features
     uint    thickStart; "Thick start"
     uint    thickEnd;   "Thick end"
     uint    reserved;   "ItemRgb"
-    lstring    jsonmolecular;    ""
+    lstring    jsonmolecular;    "Key-value pairs displayed as detail table"
 )
