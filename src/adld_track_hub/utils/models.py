@@ -87,7 +87,13 @@ class BedTableExtension:
         for model in self.extensions:
             data = model.model_dump()
             name = data.pop("name")
-            rows.append({"name": name, self.meta.column_name: str(data).replace("\"", "")})
+            data = {k: v for k, v in data.items() if v is not None and v != ""}
+            rows.append(
+                {
+                    "name": name,
+                    self.meta.column_name: str(data).replace("\"", "").replace("'", "")
+                }
+            )
         return pl.DataFrame(rows)
         # return df.with_columns(
         #     pl.col(self.meta.column_name).str.replace_all('"', '\\"')
