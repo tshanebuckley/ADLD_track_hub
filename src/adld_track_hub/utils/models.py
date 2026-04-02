@@ -87,14 +87,8 @@ class BedTableExtension:
         for model in self.extensions:
             data = model.model_dump()
             name = data.pop("name")
-            rows.append({"name": name, self.meta.column_name: data})
-        df = pl.DataFrame(rows)
-        df = df.with_columns(
-            pl.col(self.meta.column_name).struct.json_encode()
-        )
-        return df.with_columns(
-           pl.col(self.meta.column_name).str.replace_all('"', '\\"')
-        )
+            rows.append({"name": name, self.meta.column_name: str(data)})
+        return pl.DataFrame(rows)
 
     # Gets the string to append to the trackDb.txt file.
     def get_track_db_append(self) -> str:
