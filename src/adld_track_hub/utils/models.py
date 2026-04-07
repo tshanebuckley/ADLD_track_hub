@@ -150,14 +150,13 @@ class BedTable:
                 on="name",
                 how="left"
             )
-
             # collect the trackDb append line for the tables
             trackDb.append(extension_results.track_db)
             # collect the variables to insert into the AutoSQL schema
             autoSQL.append(extension_results.auto_sql)
         # provide filler value for empty values
         bed = bed.with_columns(
-            cs.string().fill_null("N/A")
+            cs.string().fill_null("{}")
         )
         # write out the tab file representation of the bed file
         bed.write_csv(
