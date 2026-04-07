@@ -174,7 +174,7 @@ class BedTable:
         with open(self.hub / "features.as", "w") as file:
             file.write(
                 template.render(
-                    extensions = "\n".join(autoSQL)
+                    extensions = "\n\t".join(autoSQL)
                 )
             )
 

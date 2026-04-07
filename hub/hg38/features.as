@@ -12,6 +12,6 @@ table features
     uint    thickEnd;   "Thick end"
     uint    reserved;   "ItemRgb"
     lstring    jsonMolecular;    "Key-value pairs displayed as detail table"
-lstring    jsonClinical;    "Key-value pairs displayed as detail table"
-lstring    jsonPublication;    "Key-value pairs displayed as detail table"
+	lstring    jsonClinical;    "Key-value pairs displayed as detail table"
+	lstring    jsonPublication;    "Key-value pairs displayed as detail table"
 )
