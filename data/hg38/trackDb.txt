@@ -6,5 +6,3 @@ longLabel ADLD Structural Variants
 visibility full
 itemRgb on
 searchIndex name
-scoreFilter 0
-scoreFilterLimits 0:1000
