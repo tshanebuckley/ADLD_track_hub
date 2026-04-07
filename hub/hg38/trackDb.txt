@@ -8,4 +8,4 @@ itemRgb on
 searchIndex name
 scoreFilter 0
 scoreFilterLimits 0:1000
-detailsDynamicTable jsonMolecular|Molecular Features,jsonClinical|Clinical Features,jsonPublication|Publication
+detailsDynamicTable jsonMolecular|Molecular Features
