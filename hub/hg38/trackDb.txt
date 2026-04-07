@@ -6,4 +6,6 @@ longLabel ADLD Structural Variants
 visibility full
 itemRgb on
 searchIndex name
-detailsDynamicTable jsonMolecular|Molecular Features,jsonClinical|Clinical Features,jsonPublication|Publication
+detailsDynamicTable jsonMolecular|Molecular Features
+detailsDynamicTable jsonClinical|Clinical Features
+detailsDynamicTable jsonPublication|Publication
