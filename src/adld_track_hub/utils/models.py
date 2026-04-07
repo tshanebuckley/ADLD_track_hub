@@ -1,7 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from abc import ABC
 from typing import List
-import csv
 from importlib.machinery import ModuleSpec
 from types import ModuleType
 from typing import Type
@@ -51,7 +50,7 @@ bed_columns: List[str] = [
 # text format for tablar data.
 class RowData(ABC, BaseModel):
     # all of these should at least contain "name" to merge on
-    name: str
+    name: str = Field(alias = "Item name")
 
 # The meta data loaded from the yaml sibling file of the csv file.
 class TableMetaData(BaseModel):
@@ -79,15 +78,19 @@ class BedTableExtension:
 
     def __init__(self, table: Path):
         self.meta = load_meta(table)
-        self.extensions = load_extension(table)
+        self.extensions = load_extension(table, self.meta.column_name)
 
     # Converts the RowData list into a polars DataFrame.
     def as_dataframe(self) -> pl.DataFrame:
         rows = []
         for model in self.extensions:
-            data = model.model_dump()
-            name = data.pop("name")
-            data = {k: v for k, v in data.items() if v is not None and v != ""}
+            data = model.model_dump(by_alias = True)
+            # have any null/empty string values convert to "NA"
+            data = {k: ("NA" if v in [None, ""] else v) for k, v in data.items()}
+            # pop the name to use it as the merged key
+            name = data.pop("Item name")
+            # below line would filter our the empty data
+            # data = {k: v for k, v in data.items() if v is not None and v != ""}
             rows.append({"name": name, self.meta.column_name: json.dumps(data)})
         return pl.DataFrame(rows)
 
@@ -182,11 +185,12 @@ def load_meta(table: Path) -> TableMetaData:
     return TableMetaData.model_validate(data)
 
 # The path to the folder containing the schema.py and data.csv sibling files.
-def load_extension(table: Path) -> List[RowData]:
+def load_extension(table: Path, table_name: str) -> List[RowData]:
     try:
         # use the name of the folder as the module name
         module_name = table.name
         schema: Path = table / "schema.py"
+        data: Path = table / "../../data.xlsx"
         # 1. Create a module specification (spec) from the file path
         spec: ModuleSpec|None = importlib.util.spec_from_file_location(module_name, schema)
         # 2. Create a new module object based on that spec
@@ -203,9 +207,11 @@ def load_extension(table: Path) -> List[RowData]:
                 # 5. Retrieve and return the class
                 cls: Type[RowData] = getattr(module, "Schema")
                 # 6. Load the list of RowData objects, validating them
-                with open(table / "data.csv", "r") as f:
-                    reader = csv.DictReader(f)
-                    rows = [cls.model_validate(row) for row in reader]
+                sheet = pl.read_excel(
+                    data,
+                    sheet_name = table_name
+                )
+                rows = [cls.model_validate(row) for row in sheet.iter_rows(named = True)]
                 return rows
             else:
                 raise Exception("Module loader not found.")
@@ -229,18 +235,16 @@ def load_bed(path: Path) -> pl.DataFrame:
 
 # Iterates over a directory of the following format:
 # data
-# |- data.bed
+# |- data.bed => actual bed file pulled from the custom track designed in UCSC
+# |- data.xlsx => contains the actual data for this data table extension broken up by sheet
 # |- extension1
-# |   |- data.csv => contains the actual data for this data table extension
 # |   |- meta.yaml => contains some meta data for implementing the extension
 # |   |- schema.py => contains a class named "Schema" implementing RowData
 # |- extension2
-# |   |- data.csv
 # |   |- meta.yaml
 # |   |- schema.py
 # ...
 # |- extensionN
-#     |- data.csv
 #     |- meta.yaml
 #     |- schema.py
 # building an initial bed file with the extensions provided

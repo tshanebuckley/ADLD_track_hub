@@ -40,6 +40,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/noarch/docstring-to-markdown-0.17-pyhe01879c_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/dulwich-1.0.0-py313h843e2db_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/exceptiongroup-1.3.1-pyhd8ed1ab_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/fastexcel-0.19.0-py313h5c7d99a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/filelock-3.25.2-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/findpython-0.7.1-pyh332efcf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/flake8-7.1.2-pyhd8ed1ab_0.conda
@@ -205,7 +206,7 @@ packages:
 - pypi: ./
   name: adld-track-hub
   version: 0.1.0
-  sha256: 33ef0115a7ce4619b58ac6d100340286ac91ac006feeb796463ded3806ee40e4
+  sha256: e91bca71f0f6f3563ebcd447faf24acdf694a839363677b820d6efcd2c8cb3b1
   requires_python: '>=3.11'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/noarch/annotated-doc-0.0.4-pyhcf101f3_0.conda
@@ -597,6 +598,25 @@ packages:
   - pkg:pypi/exceptiongroup?source=hash-mapping
   size: 21333
   timestamp: 1763918099466
+- conda: https://conda.anaconda.org/conda-forge/linux-64/fastexcel-0.19.0-py313h5c7d99a_0.conda
+  sha256: 33d9dc3e1f95924943eb0754067c39ff5fe328d9c052908a46a3fba4ef7e9fa7
+  md5: 694f5db98ded2445caa5a6fb6dbecf77
+  depends:
+  - __glibc >=2.17,<3.0.a0
+  - libgcc >=14
+  - python >=3.13,<3.14.0a0
+  - python_abi 3.13.* *_cp313
+  constrains:
+  - polars >=0.16.14
+  - pandas >=1.4.4
+  - pyarrow >=8.0.0
+  - __glibc >=2.17
+  license: MIT
+  license_family: MIT
+  purls:
+  - pkg:pypi/fastexcel?source=hash-mapping
+  size: 2389489
+  timestamp: 1768951560925
 - conda: https://conda.anaconda.org/conda-forge/noarch/filelock-3.25.2-pyhd8ed1ab_0.conda
   sha256: dddea9ec53d5e179de82c24569d41198f98db93314f0adae6b15195085d5567f
   md5: f58064cec97b12a7136ebb8a6f8a129b
