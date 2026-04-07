@@ -13,6 +13,7 @@ import yaml
 from pathlib import Path
 import shutil
 import polars as pl
+import polars.selectors as cs
 from jinja2 import Template
 
 auto_sql_template: str = """
@@ -149,17 +150,22 @@ class BedTable:
                 on="name",
                 how="left"
             )
-            bed.write_csv(
-                self.bed,
-                separator = "\t",
-                include_header = False,
-                quote_style = "never"
-            )
+
             # collect the trackDb append line for the tables
             trackDb.append(extension_results.track_db)
             # collect the variables to insert into the AutoSQL schema
             autoSQL.append(extension_results.auto_sql)
-
+        # provide filler value for empty values
+        bed = bed.with_columns(
+            cs.string().fill_null("N/A")
+        )
+        # write out the tab file representation of the bed file
+        bed.write_csv(
+            self.bed,
+            separator = "\t",
+            include_header = False,
+            quote_style = "never"
+        )
         db: Path = self.hub / "trackDb.txt"
         # copy over the template trackDb.txt file
         shutil.copy(
