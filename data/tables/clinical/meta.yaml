@@ -1,3 +1,4 @@
 table_name: "Clinical Features"
 column_name: "Clinical"
+order: 1
 description: ""

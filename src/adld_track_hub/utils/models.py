@@ -15,6 +15,7 @@ import shutil
 import polars as pl
 import polars.selectors as cs
 from jinja2 import Template
+from functools import total_ordering
 
 auto_sql_template: str = """
 table features
@@ -57,6 +58,7 @@ class RowData(ABC, BaseModel):
 class TableMetaData(BaseModel):
     table_name: str
     column_name: str
+    order: int
     description: str | None
 
 # Small class containing the results needed to extend the trackDb.txt
@@ -73,6 +75,7 @@ class RowBuildReturn:
 
 # The data structure to load that will contain both the meta data
 # and the data rows for the bed data extension.
+@total_ordering
 class BedTableExtension:
     meta: TableMetaData
     extensions: List[RowData]
@@ -80,6 +83,20 @@ class BedTableExtension:
     def __init__(self, table: Path):
         self.meta = load_meta(table)
         self.extensions = load_extension(table, self.meta.column_name)
+
+    # Essential for sorted()
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, BedTableExtension):
+            return NotImplemented
+        if self.meta.order == other.meta.order:
+            return self.meta.table_name < self.meta.table_name
+        return self.meta.order < other.meta.order
+
+    # Recommended for completeness and mypy compatibility
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, BedTableExtension):
+            return NotImplemented
+        return (self.meta.order, self.meta.table_name) == (other.meta.order, other.meta.table_name)
 
     # Converts the RowData list into a polars DataFrame.
     def as_dataframe(self) -> pl.DataFrame:
@@ -137,6 +154,15 @@ class BedTable:
                     extension
                 )
             )
+        # sort the table extensions - ordere by:
+        # 1. "order" parameter given: lower = more priority, negative = skip"
+        # 2. alphanumerically by "name"
+        # NOTE: start by filtering out the negative orders
+        # NOTE: sorting defined in dunder methods in the class
+        self.extensions = [x for x in self.extensions if x.meta.order > -1]
+        self.extensions = sorted(self.extensions)
+        # NOTE: for now, reversing the list because UCSC loads backwards
+        self.extensions.reverse()
 
     def build(self):
         trackDb: List[str] = []
