@@ -1,1 +1,4 @@
-
+table+name:  "Evidence Summary"
+column_name: "Evidence"
+order: 4
+description: "Summary of supporting evidence"
